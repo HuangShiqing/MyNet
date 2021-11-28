@@ -1,10 +1,6 @@
 #pragma once
 #include <string>
-
-enum class layout { 
-    nchw, 
-    nhwc 
-};
+#include "type.h"
 
 class Image {
 private:

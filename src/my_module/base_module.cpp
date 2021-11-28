@@ -1,5 +1,7 @@
 #include "base_module.h"
 
+#include <algorithm>
+
 BaseModule::BaseModule(/* args */) {
 }
 
@@ -64,6 +66,7 @@ void BaseModule::nms(std::vector<Detection>& input, std::vector<Detection>& outp
                     rects.box.y2 += buf[i].box.y2 * rate;
                     rects.confidence += buf[i].confidence * rate;
                 }
+                strcpy(rects.label, buf[0].label);
                 output.push_back(rects);
                 break;
             }

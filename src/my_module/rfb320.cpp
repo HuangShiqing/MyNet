@@ -4,7 +4,7 @@ RFB320::RFB320(std::string model_file) {
     // 1.init model
     m_net = new MyNet(FrameworkType::MNN, DeviceType::CPU, 0);
     m_net->InitModelFile(model_file.c_str());
-    // 2.init inputs    
+    // 2.init inputs
     m_net->InitInputsOutputs();
     // 3.init user data
     init_user_data();
@@ -14,8 +14,8 @@ RFB320::~RFB320() {
     m_net->~MyNet();
 }
 
-void RFB320::init_user_data(){
-    #define clip(x, y) (x < 0 ? 0 : (x > y ? y : x))
+void RFB320::init_user_data() {
+#define clip(x, y) (x < 0 ? 0 : (x > y ? y : x))
     int in_w = 320;
     int in_h = 240;
     int num_featuremap = 4;
@@ -55,7 +55,7 @@ void RFB320::init_user_data(){
     m_user_data.num_anchors = m_user_data.priors.size();
 }
 
-void RFB320::pre_process(uint8_t* data){
+void RFB320::pre_process(uint8_t* data) {
     float mean = 127;
     float norm = 1.0 / 128;
     mynet_input& input = m_net->m_inputs["input"];
@@ -95,10 +95,14 @@ void RFB320::post_process() {
             det.box.x2 = clip(x_center + w / 2.0, 1) * m_user_data.image_w;
             det.box.y2 = clip(y_center + h / 2.0, 1) * m_user_data.image_h;
             det.confidence = clip(scores_data[i * 2 + 1], 1);
-            det.label = "face";
+            strcpy(det.label, "face");
             detections.push_back(det);
         }
     }
     m_detections.clear();
-    nms(detections, m_detections, nms_type::blending_nms, 0.3);
+    nms(detections, m_detections, hard_nms, 0.3);
+}
+
+std::vector<Detection>& RFB320::get_detections() {
+    return this->m_detections;
 }

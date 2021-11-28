@@ -24,14 +24,12 @@ uint8_t* Image::load_image(std::string filename, int dst_w, int dst_h, layout l)
                      STBIR_ALPHA_CHANNEL_NONE, 0, STBIR_EDGE_CLAMP, STBIR_EDGE_CLAMP, STBIR_FILTER_BOX,
                      STBIR_FILTER_BOX, STBIR_COLORSPACE_SRGB, nullptr);
         std::swap(data, data_resized);
-        //TODO:
         delete data_resized;
     }
     if (l == layout::nchw) {
         uint8_t* data_nchw = new uint8_t[dst_w * dst_h * 3];
         nhwc2nchw(data_nchw, data, dst_w, dst_h);
         std::swap(data, data_nchw);
-        //TODO:
         delete data_nchw;
     }
     return data;
