@@ -20,6 +20,7 @@ int main(int argc, char const* argv[]) {
     printf("d[0].box.x2=%d\r\n", d[0].box.x2);
     printf("d[0].box.y2=%d\r\n", d[0].box.y2);
 
+    free(data);
     wrapper_rfb320_delete(p);
     return 0;
 }

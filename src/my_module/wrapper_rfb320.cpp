@@ -15,6 +15,11 @@ uint8_t* wrapper_rfb320_load_image(void* p, const char* image_path, int dst_w, i
     return static_cast<RFB320*>(p)->image.load_image(image_path, dst_w, dst_h, l);
 }
 
+void wrapper_rfb320_nhwc2nchw(void* p, uint8_t* dst_data, uint8_t* src_data, int width, int height) {
+    static_cast<RFB320*>(p)->image.nhwc2nchw(dst_data, src_data, width, height);
+    return;
+}
+
 void wrapper_rfb320_pre_process(void* p, uint8_t* data) {
     static_cast<RFB320*>(p)->pre_process(data);
     return;
