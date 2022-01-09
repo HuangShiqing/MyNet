@@ -1,0 +1,2 @@
+model_path: "/home/hsq/DeepLearning/code/MyNet/resource/model/RFB-320.mnn"
+input_path: /home/huangshiqing/DeepLearning/code/Paddle-Lite-Inference/yaml_input/0.yaml

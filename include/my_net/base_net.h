@@ -3,15 +3,15 @@
 #include <memory.h>
 
 #include "image.h"
-#include "my_net.h"
+#include "base_infer.h"
 #include "type.h"
 
-class BaseModule {
+class BaseNet {
 private:
     /* data */
 public:
-    BaseModule(/* args */);
-    ~BaseModule();
+    BaseNet(/* args */);
+    ~BaseNet();
 
     void nms(std::vector<Detection>& input, std::vector<Detection>& output, nms_type type, float iou_threshold);
 
@@ -21,6 +21,6 @@ public:
     virtual void post_process() = 0;
     virtual std::vector<Detection>& get_detections() = 0;
 
-    MyNet* m_net;
+    BaseInfer* m_infer;
     Image image;
 };

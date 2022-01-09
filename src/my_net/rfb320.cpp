@@ -1,17 +1,19 @@
 #include "rfb320.h"
+#include "mnn_infer.h"
 
-RFB320::RFB320(std::string model_file) {
+RFB320::RFB320(std::string yaml_path) {
     // 1.init model
-    m_net = new MyNet(FrameworkType::MNN, DeviceType::CPU, 0);
-    m_net->InitModelFile(model_file.c_str());
+    m_infer = new MNNInfer();
+    m_infer->load_model(yaml_path);
     // 2.init inputs
-    m_net->InitInputsOutputs();
+    m_infer->init_infer_inputs_outputs();
     // 3.init user data
     init_user_data();
 }
 
 RFB320::~RFB320() {
-    m_net->~MyNet();
+    delete m_infer;
+    // ((MNNInfer*)m_infer)->~MNNInfer();
 }
 
 void RFB320::init_user_data() {
@@ -58,29 +60,24 @@ void RFB320::init_user_data() {
 void RFB320::pre_process(uint8_t* data) {
     float mean = 127;
     float norm = 1.0 / 128;
-    mynet_input& input = m_net->m_inputs["input"];
-    int count = 1;
-    for (auto& dim_size : input.input_shape) {
-        count *= dim_size;
+    auto input_tensor = m_infer->input_tensors_["input"];
+    auto shape = input_tensor.shape_;
+    int count = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>());
+
+    for (int i = 0; i < count; i++) {
+        *((float*)(input_tensor.data_)+i) = (*(data + i) - mean) * norm;
     }
-    float* input_data_fp32 = new float[count];
-
-    for (int i = 0; i < count; i++)
-        input_data_fp32[i] = (*(data + i) - mean) * norm;
-
-    if(input.input_data)
-        delete [] (float*)input.input_data;
-    input.input_data = (void*)input_data_fp32;
 }
 
 void RFB320::forward() {
-    m_net->PrepareForward();
-    m_net->Forward();
+    m_infer->prepare_inputs();
+    m_infer->infer_model();
+    m_infer->get_outputs();
 }
 
 void RFB320::post_process() {
-    float* boxes_data = (float*)m_net->m_outputs["boxes"].output_data;
-    float* scores_data = (float*)m_net->m_outputs["scores"].output_data;
+    float* boxes_data = (float*)m_infer->output_tensors_["boxes"].data_;
+    float* scores_data = (float*)m_infer->output_tensors_["scores"].data_;
     std::vector<Detection> detections;
     for (int i = 0; i < m_user_data.num_anchors; i++) {
         if (scores_data[i * 2 + 1] > m_user_data.score_threshold) {

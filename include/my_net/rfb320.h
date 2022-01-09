@@ -1,7 +1,7 @@
 #pragma once
-#include "base_module.h"
+#include "base_net.h"
 
-class RFB320 : public BaseModule {
+class RFB320 : public BaseNet {
 private:
     /* data */
 public:

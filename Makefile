@@ -1,25 +1,26 @@
 CROSS_COMPILE =#arm-linux-gnueabi-#aarch64-linux-gnu-#指定交叉编译器
 DEBUG = 1#指定当前为debug模式
 MNN_DIR = /home/hsq/DeepLearning/clone/MNN
+YAML_DIR = /home/hsq/DeepLearning/clone/yaml-cpp/
 
 CC = $(CROSS_COMPILE)gcc#指定编译器
 CXX = $(CROSS_COMPILE)g++#指定编译器
 CCFLAGS = -Wall -fPIC
 CXXFLAGS = -std=c++11 -Wall -fPIC
 #指定头文件目录
-CCFLAGS += -I./include/ -I./include/my_module/ -I./3rd_party/stb_image -I$(MNN_DIR)/include
-CXXFLAGS += -I./include/ -I./include/my_module/ -I./3rd_party/stb_image -I$(MNN_DIR)/include
+CCFLAGS += -I$(YAML_DIR)/include -I./include/my_net -I./include/my_infer -I./include/ -I./3rd_party/stb_image -I$(MNN_DIR)/include
+CXXFLAGS += -I$(YAML_DIR)/include -I./include/my_net -I./include/my_infer -I./include/ -I./3rd_party/stb_image -I$(MNN_DIR)/include
 #指定库文件目录
-LDFLAGS = -L$(MNN_DIR)/build
+LDFLAGS = -L$(MNN_DIR)/build -L$(YAML_DIR)/build
 #指定库文件名称
-LIBS = -lMNN -lstdc++ -lm
+LIBS = -lMNN -lstdc++ -lm -lyaml-cpp
 #告诉makefile去哪里找依赖文件和目标文件
-VPATH = ./src/:./src/my_module/:./example/
+VPATH = src/my_net/:src/my_infer/:src/:example/
 #最终生成的可执行文件名
 CC_EXAMPLE = rfb320_cc_example
 EXAMPLE = rfb320_example
-DLIB = libMyModule.so
-SLIB = libMyModule.a
+DLIB = libMyNet.so
+SLIB = libMyMet.a
 
 #选择debug还是release
 ifeq ($(DEBUG), 1)
@@ -33,7 +34,7 @@ endif
 #存放.o文件的文件夹
 OBJDIR = ./build/obj/
 #中间过程所涉及的.o文件	
-OBJ = wrapper_rfb320.o rfb320.o base_module.o image.o my_net.o my_net_mnn.o 
+OBJ = mnn_infer.o base_infer.o rfb320.o base_net.o data_loader.o wrapper_rfb320.o  image.o 
 OBJS = $(addprefix $(OBJDIR), $(OBJ))#添加路径
 EXAMPLE_OBJ = rfb320_example.o
 EXAMPLE_OBJS = $(addprefix $(OBJDIR), $(EXAMPLE_OBJ))#添加路径

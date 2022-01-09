@@ -1,14 +1,14 @@
-#include "base_module.h"
+#include "base_net.h"
 
 #include <algorithm>
 
-BaseModule::BaseModule(/* args */) {
+BaseNet::BaseNet(/* args */) {
 }
 
-BaseModule::~BaseModule() {
+BaseNet::~BaseNet() {
 }
 
-void BaseModule::nms(std::vector<Detection>& input, std::vector<Detection>& output, nms_type type,
+void BaseNet::nms(std::vector<Detection>& input, std::vector<Detection>& output, nms_type type,
                      float iou_threshold) {
     std::sort(input.begin(), input.end(),
               [](const Detection& a, const Detection& b) { return a.confidence > b.confidence; });
