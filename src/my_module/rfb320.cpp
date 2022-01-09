@@ -68,6 +68,8 @@ void RFB320::pre_process(uint8_t* data) {
     for (int i = 0; i < count; i++)
         input_data_fp32[i] = (*(data + i) - mean) * norm;
 
+    if(input.input_data)
+        delete [] (float*)input.input_data;
     input.input_data = (void*)input_data_fp32;
 }
 
