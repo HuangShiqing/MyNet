@@ -1,0 +1,5 @@
+model_dir: /home/huangshiqing/DeepLearning/model/Paddle/McvNearlineEsCgcDx/mcv-nearline-es-cgc-dx
+model_path: 
+param_path: 
+
+unset_passes: ["lite_seqpool_cvm_concat_fuse_pass", "xpu_memory_optimize_pass"]

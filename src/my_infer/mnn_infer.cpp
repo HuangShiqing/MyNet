@@ -34,6 +34,14 @@ int MNNInfer::load_model(std::string yaml_path) {
     session_ = interpreter_->createSession(config);
 }
 
+int MNNInfer::init_inputs_outputs() {
+    // TODO:
+}
+
+int MNNInfer::init_inputs_outputs(std::string file_path) {
+    // TODO:
+}
+
 void MNNInfer::init_infer_inputs_outputs() {
     auto mnn_inputs = interpreter_->getSessionInputAll(session_);
     for (auto& mnn_input : mnn_inputs) {

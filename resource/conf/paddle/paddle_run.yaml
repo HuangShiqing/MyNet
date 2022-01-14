@@ -1,0 +1,3 @@
+# model_dir: /home/huangshiqing/DeepLearning/model/Paddle/McvNearlineEsCgcDx/mcv-nearline-es-cgc-dx
+model_path: /home/huangshiqing/DeepLearning/model/Paddle/McvNearlineEsCgcDx/mcv-nearline-es-cgc-dx/__model__
+param_path: /home/huangshiqing/DeepLearning/model/Paddle/McvNearlineEsCgcDx/mcv-nearline-es-cgc-dx/params

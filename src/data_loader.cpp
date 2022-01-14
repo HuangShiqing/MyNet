@@ -1,3 +1,4 @@
+#include <memory.h>
 #include "yaml-cpp/yaml.h"
 #include "data_loader.h"
 
@@ -18,7 +19,11 @@ DataLoader::DataLoader(std::string file_path, std::string file_type) {
             t.name_ = name;
             t.shape_ = shape;
             t.lod_ = {lod};  // TODO:
-            t.data_ = static_cast<void*>(data.data()); //TODO:
+            // t.data_ = static_cast<void*>(data.data()); //TODO:
+            t.data_size_ = data.size() * sizeof(float);
+            auto data_mem = new uint8_t[t.data_size_]; 
+            memcpy(data_mem, data.data(), t.data_size_);
+            t.data_ = data_mem;
             t.dtype_ = Dtype::fp32;//TODO:
             input_tensors_.insert(std::make_pair(name, t));
         }
@@ -27,8 +32,10 @@ DataLoader::DataLoader(std::string file_path, std::string file_type) {
     }
 };
 
-DataLoader::~DataLoader()
-{
+DataLoader::~DataLoader() {
+    for(auto& input_tensor : input_tensors_) {
+        delete[] input_tensor.second.data_;
+    }
 }
 
 

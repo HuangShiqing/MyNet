@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <numeric>
 
 #include "data_loader.h"
 
@@ -16,7 +17,7 @@ void BaseInfer::prepare_infer_inputs(std::map<std::string, void*>& input_datas) 
     for (auto& input_data : input_datas) {
         auto found = input_tensors_.find(input_data.first);
         if (found != input_tensors_.end()) {
-            memcpy(found->second.data_, input_data.second, found->second.data_size_ * sizeof(float));
+            memcpy(found->second.data_, input_data.second, found->second.data_size_);
         } else {
             std::cout << "[hsq] error" << std::endl;
             throw;
@@ -31,11 +32,14 @@ void BaseInfer::prepare_infer_inputs(std::string file_path) {
         auto found = input_tensors_.find(yaml_tensor.first);
         if (found != input_tensors_.end()) {
             // TODO:check
+            auto shape = yaml_tensor.second.shape_;
+            int count = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>());
+
             found->second.shape_ = yaml_tensor.second.shape_;
             found->second.lod_ = yaml_tensor.second.lod_;
             found->second.dtype_ = yaml_tensor.second.dtype_;
-            found->second.data_size_ = yaml_tensor.second.data_size_;
-            memcpy(found->second.data_, yaml_tensor.second.data_, found->second.data_size_ * sizeof(float));
+            found->second.data_size_ = count * sizeof(float);
+            memcpy(found->second.data_, yaml_tensor.second.data_, found->second.data_size_);
         } else {
             std::cout << "[hsq] error" << std::endl;
             throw;
@@ -60,5 +64,5 @@ void BaseInfer::prepare_infer_inputs(std::string file_path) {
 
 
 std::map<std::string, Tensor> BaseInfer::get_infer_outputs() {
-    // TODO:
+    return output_tensors_;
 }

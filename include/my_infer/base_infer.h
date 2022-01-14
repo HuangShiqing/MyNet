@@ -13,6 +13,11 @@ public:
     ~BaseInfer() = default;
 
     virtual int load_model(std::string yaml_path) = 0;
+    virtual int init_inputs_outputs() = 0;
+    // virtual int init_inputs_outputs(void* input_data) = 0;//TODO:
+    // virtual int init_inputs_outputs(std::map<std::string, void*>& input_datas) = 0;//TODO:
+    virtual int init_inputs_outputs(std::string file_path) = 0;
+
     // virtual std::vector<std::string> get_input_names() = 0;
     // virtual std::vector<std::string> get_output_names() = 0;
     // virtual std::vector<std::string> get_middle_names() = 0;
