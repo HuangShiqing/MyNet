@@ -3,7 +3,7 @@
 #include "wrapper_rfb320.h"
 
 int main(int argc, char const* argv[]) {
-    char yaml_path[] = "/home/hsq/DeepLearning/code/MyNet/conf/mnn/rfb320.yaml";
+    char yaml_path[] = "/home/hsq/DeepLearning/code/MyNet/resource/conf/mnn/rfb320.yaml";
     char image_path[] = "/home/hsq/DeepLearning/code/MyNet/resource/face.jpg";
 
     void* p = wrapper_rfb320_init(yaml_path);

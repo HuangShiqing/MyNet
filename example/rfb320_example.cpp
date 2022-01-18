@@ -4,7 +4,7 @@
 #include "rfb320.h"
 
 int main(int argc, char const* argv[]) {
-    std::string yaml_path = "/home/hsq/DeepLearning/code/MyNet/conf/mnn/rfb320.yaml";
+    std::string yaml_path = "/home/hsq/DeepLearning/code/MyNet/resource/conf/mnn/rfb320.yaml";
     std::string image_path = "/home/hsq/DeepLearning/code/MyNet/resource/face.jpg";
 
     RFB320 rfb320(yaml_path);

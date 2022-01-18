@@ -1,17 +1,17 @@
 CROSS_COMPILE =#arm-linux-gnueabi-#aarch64-linux-gnu-#指定交叉编译器
 DEBUG = 1#指定当前为debug模式
 
-MNN = 0
+MNN = 1
 MNN_DIR = /home/hsq/DeepLearning/clone/MNN
 
-PADDLE_LITE = 1
+PADDLE_LITE = 0
 TOOLCHAIN_DIR = /home/huangshiqing/toolchain/XTCL
 PADDLE_LITE_BUILD_DIR = /data/huangshiqing/DeepLearning/code/Paddle-Lite/build.lite.x86
 
-PADDLE = 1
+PADDLE = 0
 PADDLE_DIR = /data/huangshiqing/DeepLearning/code/Paddle
 
-YAML_DIR = /data/huangshiqing/DeepLearning/clone/yaml-cpp
+YAML_DIR = /home/hsq/DeepLearning/clone/yaml-cpp
 
 CC = $(CROSS_COMPILE)gcc#指定编译器
 CXX = $(CROSS_COMPILE)g++#指定编译器
@@ -53,7 +53,24 @@ ifeq ($(MNN), 1)
 CCFLAGS+=-I$(MNN_DIR)/include
 LDFLAGS+=-L$(MNN_DIR)/build
 LIBS+=-lMNN
-OBJ+=mnn_infer.o
+OBJ+=mnn_infer.o rfb320.o wrapper_rfb320.o
+MNN_EXE=mnn_infer_example
+EXES+=$(MNN_EXE)
+EXE_OBJS=$(addprefix $(OBJDIR), $(MNN_EXE).o)#添加路径
+$(MNN_EXE):$(EXE_OBJS) $(SLIB)
+		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)
+
+RFB_EXE=rfb320_example
+EXES+=$(RFB_EXE)
+EXE_OBJS=$(addprefix $(OBJDIR), $(RFB_EXE).o)#添加路径
+$(RFB_EXE):$(EXE_OBJS) $(SLIB)
+		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)
+
+RFB_CC_EXE=rfb320_cc_example
+EXES+=$(RFB_CC_EXE)
+EXE_OBJS=$(addprefix $(OBJDIR), $(RFB_CC_EXE).o)#添加路径
+$(RFB_CC_EXE):$(EXE_OBJS) $(SLIB)
+		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)		
 endif
 
 # PADDLE_LITE_BUILD_DIR should be ahead of PADDLE_DIR otherwise will cause namespace error
