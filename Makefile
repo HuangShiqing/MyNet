@@ -31,7 +31,7 @@ VPATH = src/my_net/:src/my_infer/:src/:example/
 #存放.o文件的文件夹
 OBJDIR = ./build/obj/
 #中间过程所涉及的.o文件
-OBJ = base_infer.o base_net.o data_loader.o image.o 
+OBJ = base_infer.o base_net.o data_loader.o image.o compare.o
 CXXFLAGS=${CCFLAGS} -std=c++11
 OBJS = $(addprefix $(OBJDIR), $(OBJ))#添加路径
 
@@ -104,6 +104,12 @@ PADDLE_EXE=paddle_infer_example
 EXES+=$(PADDLE_EXE)
 EXE_OBJS=$(addprefix $(OBJDIR), $(PADDLE_EXE).o)#添加路径
 $(PADDLE_EXE):$(EXE_OBJS) $(SLIB)
+		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)
+
+COMPARE_EXE=compare_example
+EXES+=$(COMPARE_EXE)
+EXE_OBJS=$(addprefix $(OBJDIR), $(COMPARE_EXE).o)#添加路径
+$(COMPARE_EXE):$(EXE_OBJS) $(SLIB)
 		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)
 endif
 

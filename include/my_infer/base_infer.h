@@ -27,13 +27,14 @@ public:
     void prepare_infer_inputs(std::map<std::string, void*>& input_datas);//app->my_infer
     void prepare_infer_inputs(std::string file_path);//app->my_infer
     std::map<std::string, Tensor> get_infer_outputs();//my_infer->app
+    std::map<std::string, Tensor> get_infer_middles();//my_infer->app
 
     virtual void prepare_inputs() = 0;//my_infer->mnn, paddle-lite...
     virtual void infer_model() = 0;
     virtual void get_outputs() = 0;//mnn, paddle-lite...->my_infer
 
-    virtual std::map<std::string, Tensor> get_inputs() = 0;
-    virtual std::map<std::string, Tensor> get_middles() = 0;
+    virtual void get_inputs() = 0;
+    virtual void get_middles() = 0;
 
     std::map<std::string, Tensor> input_tensors_;
     std::map<std::string, Tensor> output_tensors_;

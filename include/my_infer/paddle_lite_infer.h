@@ -26,8 +26,8 @@ public:
     void infer_model();
     void get_outputs();  // mnn, paddle-lite...->my_infer
 
-    std::map<std::string, Tensor> get_inputs();
-    std::map<std::string, Tensor> get_middles();
+    void get_inputs();
+    void get_middles();
 
     std::shared_ptr<paddle::lite_api::PaddlePredictor> predictor_;
 };

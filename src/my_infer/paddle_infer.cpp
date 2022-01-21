@@ -14,6 +14,14 @@ PaddleInfer::~PaddleInfer() {
     for (auto& input_tensor : input_tensors_) {
         delete [] input_tensor.second.data_;
     }
+
+    for (auto& output_tensor : output_tensors_) {
+        delete [] output_tensor.second.data_;
+    }
+
+    for (auto& middle_tensor : middle_tensors_) {
+        delete [] middle_tensor.second.data_;
+    }
 }
 
 int PaddleInfer::load_model(std::string yaml_path) {
@@ -222,7 +230,7 @@ void PaddleInfer::get_outputs() {
     }
 }
 
-std::map<std::string, Tensor> PaddleInfer::get_inputs(){
+void PaddleInfer::get_inputs(){
     // TODO:
 };
 
@@ -260,40 +268,40 @@ std::map<std::string, Tensor> PaddleInfer::get_inputs(){
 //     return output_tensors_;  // TODO:
 // };
 
-std::map<std::string, Tensor> PaddleInfer::get_middles() {
-//     std::vector<std::string> middle_names = predictor_->GetMiddleNames();
-//     for (int i = 0; i < middle_names.size(); i++) {
-//         auto middle_tensor = predictor_->GetOutputHandle(middle_names[i]);
+void PaddleInfer::get_middles() {
+    std::vector<std::string> middle_names = predictor_->GetMiddleNames();
+    for (int i = 0; i < middle_names.size(); i++) {
+        auto middle_tensor = predictor_->GetOutputHandle(middle_names[i]);
 
-//         // TODO: tmp skip the other type
-//         // if(middle_tensor->type()!=paddle_infer::DataType::FLOAT32)
-//         //     continue;
-//         auto shape = middle_tensor->shape();
-//         int cout = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>());
+        // TODO: tmp skip the other type
+        if(middle_tensor->type()!=paddle_infer::DataType::FLOAT32)
+            continue;
+            
+        auto shape = middle_tensor->shape();
+        int count = std::accumulate(shape.begin(), shape.end(), 1, std::multiplies<int>());
 
-//         Tensor middle_yaml;
-//         middle_yaml.name_ = middle_names[i];
+        Tensor t;
+        t.name_ = middle_names[i];
 
-//         std::vector<int> tmp_shape;
-//         for (auto dim : shape) {
-//             tmp_shape.push_back(static_cast<int>(dim));
-//         }
-//         middle_yaml.shape_ = tmp_shape;
+        std::vector<int> tmp_shape;
+        for (auto dim : shape) {
+            tmp_shape.push_back(static_cast<int>(dim));
+        }
+        t.shape_ = tmp_shape;
 
-//         std::vector<float> data(cout);
-//         middle_tensor->CopyToCpu<float>(data.data());
-//         middle_yaml.data_ = data;
+        t.data_size_ = count * sizeof(float);
+        t.data_ = new uint8_t[t.data_size_];  // copy
+        middle_tensor->CopyToCpu<float>((float*)t.data_);
 
-//         middle_yaml.lod_.clear();
-//         for (auto lv0 : middle_tensor->lod()) {
-//             std::vector<int> tmp;
-//             for (auto lv1 : lv0) {
-//                 tmp.push_back(static_cast<int>(lv1));
-//             }
-//             middle_yaml.lod_.push_back(tmp);
-//         }
+        t.lod_.clear();
+        for (auto lv0 : middle_tensor->lod()) {
+            std::vector<int> tmp;
+            for (auto lv1 : lv0) {
+                tmp.push_back(static_cast<int>(lv1));
+            }
+            t.lod_.push_back(tmp);
+        }
 
-//         middle_tensors_.insert(std::make_pair(middle_names[i], middle_yaml));
-//     }
-//     return middle_tensors_;  // TODO:
+        middle_tensors_.insert(std::make_pair(middle_names[i], t));
+    }
 };

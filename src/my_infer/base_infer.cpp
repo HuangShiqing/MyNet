@@ -66,3 +66,8 @@ void BaseInfer::prepare_infer_inputs(std::string file_path) {
 std::map<std::string, Tensor> BaseInfer::get_infer_outputs() {
     return output_tensors_;
 }
+
+std::map<std::string, Tensor> BaseInfer::get_infer_middles() {
+    get_middles();
+    return middle_tensors_;
+}
