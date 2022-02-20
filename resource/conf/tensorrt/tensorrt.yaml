@@ -1,0 +1,2 @@
+# model_path: /home/hsq/DeepLearning/code/MyNet/resource/model/squeezenet1.1-7.onnx
+model_path: /home/hsq/DeepLearning/code/MyNet/resource/model/mnist3-8.onnx

@@ -1,7 +1,11 @@
 CROSS_COMPILE =#arm-linux-gnueabi-#aarch64-linux-gnu-#指定交叉编译器
 DEBUG = 1#指定当前为debug模式
 
-MNN = 1
+TENSORRT = 1
+TENSORRT_DIR = /opt/TensorRT-8.2.1.8
+CUDA_DIR = /opt/cuda-11.0
+
+MNN = 0
 MNN_DIR = /home/hsq/DeepLearning/clone/MNN
 
 PADDLE_LITE = 0
@@ -47,6 +51,19 @@ ifeq ($(DEBUG), 1)
 CCFLAGS+=-O0 -g
 else
 CCFLAGS+=-Ofast
+endif
+
+ifeq ($(TENSORRT), 1)
+VPATH+=:$(TENSORRT_DIR)/samples/common
+CCFLAGS+=-I${TENSORRT_DIR}/include/ -I${TENSORRT_DIR}/samples/common/ -I${CUDA_DIR}/include/
+LDFLAGS+=-L${TENSORRT_DIR}/lib  -L${CUDA_DIR}/lib64
+LIBS+=-lcudart -lcudnn -lcublas -lnvonnxparser -lnvparsers -lnvinfer -lnvinfer_plugin
+OBJS+=$(addprefix $(OBJDIR), tensorrt_infer.o logger.o)
+TENSORRT_EXE=tensorrt_example
+EXES+=$(TENSORRT_EXE)
+EXE_OBJS=$(addprefix $(OBJDIR), $(TENSORRT_EXE).o)#添加路径
+$(TENSORRT_EXE):$(EXE_OBJS) $(SLIB)
+		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)
 endif
 
 ifeq ($(MNN), 1)

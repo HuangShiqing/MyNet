@@ -5,7 +5,7 @@
 
 int main(int argc, char const* argv[]) {
     std::string yaml_path = "/home/hsq/DeepLearning/code/MyNet/resource/conf/mnn/rfb320.yaml";
-    std::string image_path = "/home/hsq/DeepLearning/code/MyNet/resource/face.jpg";
+    std::string image_path = "/home/hsq/DeepLearning/code/MyNet/resource/input/face.jpg";
 
     RFB320 rfb320(yaml_path);
     uint8_t* data = rfb320.image.load_image(image_path, 320, 240);

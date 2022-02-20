@@ -4,7 +4,7 @@
 
 int main(int argc, char const* argv[]) {
     char yaml_path[] = "/home/hsq/DeepLearning/code/MyNet/resource/conf/mnn/rfb320.yaml";
-    char image_path[] = "/home/hsq/DeepLearning/code/MyNet/resource/face.jpg";
+    char image_path[] = "/home/hsq/DeepLearning/code/MyNet/resource/input/face.jpg";
 
     void* p = wrapper_rfb320_init(yaml_path);
     uint8_t* data = wrapper_rfb320_load_image(p, image_path, 320, 240, nchw);
