@@ -58,12 +58,24 @@ VPATH+=:$(TENSORRT_DIR)/samples/common
 CCFLAGS+=-I${TENSORRT_DIR}/include/ -I${TENSORRT_DIR}/samples/common/ -I${CUDA_DIR}/include/
 LDFLAGS+=-L${TENSORRT_DIR}/lib  -L${CUDA_DIR}/lib64
 LIBS+=-lcudart -lcudnn -lcublas -lnvonnxparser -lnvparsers -lnvinfer -lnvinfer_plugin
-OBJS+=$(addprefix $(OBJDIR), tensorrt_infer.o logger.o)
+OBJS+=$(addprefix $(OBJDIR), openpose.o wrapper_openpose.o tensorrt_infer.o logger.o)
 TENSORRT_EXE=tensorrt_example
 EXES+=$(TENSORRT_EXE)
 EXE_OBJS=$(addprefix $(OBJDIR), $(TENSORRT_EXE).o)#添加路径
 $(TENSORRT_EXE):$(EXE_OBJS) $(SLIB)
 		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)
+
+OPENPOSE_EXE=tensorrt_openpose_example
+EXES+=$(OPENPOSE_EXE)
+EXE_OBJS=$(addprefix $(OBJDIR), $(OPENPOSE_EXE).o)#添加路径
+$(OPENPOSE_EXE):$(EXE_OBJS) $(SLIB)
+		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)
+
+WRAPPER_OPENPOSE_EXE=tensorrt_wrapper_openpose_example
+EXES+=$(WRAPPER_OPENPOSE_EXE)
+EXE_OBJS=$(addprefix $(OBJDIR), $(WRAPPER_OPENPOSE_EXE).o)#添加路径
+$(WRAPPER_OPENPOSE_EXE):$(EXE_OBJS) $(SLIB)
+		$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS) $(LIBS) $(SLIB)	
 endif
 
 ifeq ($(MNN), 1)
