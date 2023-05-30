@@ -23,6 +23,9 @@ def main():
     caffe_prototxt_path = relay_text_path.replace(".txt", ".prototxt")
     relay_python_path = relay_text_path.replace(".txt", ".py")
 
+    # TODO:
+    # 1. param name include . or {
+    #    %0 = nn.conv2d(%input_feature, meta[relay.Constant][0] /* ty=Tensor[(64, 74, 1, 1), float32] */, out_max=None, relay.attrs.Conv2DAttrs{padding=[0, 0, 0, 0], channels=64, kernel_size=[1, 1]}) /* span = Conv_0 */ /* ty=Tensor[(1, 64, 1152, 1152), float32] */;
     with open(relay_text_path, 'r') as f:
         layer_list = list()
         replace_map = dict()
@@ -47,7 +50,7 @@ def main():
             type = -1
             if "def" in line:
                 type = 0
-            elif "}" in line:
+            elif "}" in line and len(line) == 2:# len("}\n")==2:
                 type = 5
             else:
                 index = line.find('(')
@@ -198,6 +201,18 @@ def main():
             elif type == 5:
                 pass
 
+    type_transform_map = {
+        "dyn.reshape":"reshape",
+        "dyn.strided_slice":"strided_slice"
+    }
+    type_param_ignore_map = {
+        "dyn.reshape":["newshape"],
+        "dyn.strided_slice":["begin", "end", "strides"],
+    }
+    type_param_transform_map = {
+        "nn.gelu":{"old":"format", "new":"gelu_format"}
+    }
+    param_ignore_list = ["out_dtype"]
     # create relay.prototxt
     with open(caffe_prototxt_path, 'w') as caffe_prototxt:
         for index, net_input in enumerate(net_inputs):
@@ -223,23 +238,20 @@ def main():
 
             # this param only have one field
             caffe_prototxt.write("  hdf5_output_param {\r")
-            for param in l.params:
+            for key in l.params:
+                # ignore some param
+                if l.type in type_param_ignore_map:
+                    if key in type_param_ignore_map[l.type]:
+                        continue
+                if key in param_ignore_list:
+                    continue
                 caffe_prototxt.write(
-                    "    {}: {}\r".format(param, l.params[param]))
+                    "    {}: {}\r".format(key, l.params[key]))
             caffe_prototxt.write("  }\r")
 
             caffe_prototxt.write("}\r")
 
     # create relay_python.py
-    type_transform_map = {
-        "dyn.reshape":"reshape",
-        "dyn.strided_slice":"strided_slice"
-    }
-    type_param_ignore_map = {
-        "dyn.reshape":["newshape"],
-        "dyn.strided_slice":["begin", "end", "strides"]
-    }
-    param_ignore_list = ["out_dtype"]
     with open(relay_python_path, 'w') as relay_python:
         relay_python.write("from tvm import relay, IRModule\r")
         relay_python.write("import numpy as np\r\r")
